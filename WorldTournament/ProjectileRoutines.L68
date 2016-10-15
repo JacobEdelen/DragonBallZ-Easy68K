@@ -1,0 +1,630 @@
+00000000 Starting Address
+Assembler used: EASy68K Editor/Assembler v5.15.04
+Created On: 10/13/2016 11:44:40 PM
+
+00000000                             1  *-----------------------------------------------------------
+00000000                             2  * Title      :  ProjectileRoutines
+00000000                             3  * Written by :  Jacob Edelen
+00000000                             4  * Date       :  10/9/2016
+00000000                             5  * Description:  All routines that the projectile needs to function
+00000000                             6  *-----------------------------------------------------------
+00000000                             7  
+00000000                             8  
+00000000                             9  spawnPlayer1Projectile
+00000000                            10      *Check if the player already has a projectile active.  If it does, do not spawn another
+Line 11 ERROR: Undefined symbol
+00000000  23FC 00000001 00544480    11      move.l  #1, Player1ProjectileActive
+Line 12 ERROR: Undefined symbol
+0000000A  2239 004DBB8E             12      move.l  Player1Left, d1
+00000010  0C81 00000001             13      cmpi.l  #1, d1
+00000016  6700 00B2                 14      BEQ     spawnPlayer1ProjectileLeft
+0000001A                            15  spawnPlayer1ProjectileRight
+0000001A                            16      *player projectile is marked right for position update
+Line 17 ERROR: Undefined symbol
+0000001A  23FC 00000000 00544480    17      move.l  #0, Player1ProjectileLeft
+00000024                            18  
+00000024                            19      *If player is powered up, draw the larger
+Line 20 ERROR: Undefined symbol
+00000024  2039 004DBB8E             20      move.l  Player1ChunkY, d0
+0000002A  0C80 00000000             21      cmpi.l  #0, d0
+00000030  6700 001A                 22      BEQ     drawTinyPlayer1ProjectileRight
+Line 23 ERROR: Undefined symbol
+00000034  41F9 004DBB8E             23      lea     BigBang, a0
+Line 24 ERROR: Undefined symbol
+0000003A  43F9 004DBB8E             24      lea     BigBangSound, a1
+00000040  7200                      25      move.l  #0,d1
+00000042  7400                      26      move.l  #0,d2
+00000044  7049                      27      move.l  #73,d0
+00000046  4E4F                      28      Trap    #15
+00000048                            29      
+00000048  6000 0016                 30      BRA     drawPlayer1ProjectileRight
+0000004C                            31              
+0000004C                            32  drawTinyPlayer1ProjectileRight
+0000004C                            33      *Player is not powered up.  Spawn the smaller projectile
+Line 34 ERROR: Undefined symbol
+0000004C  41F9 004DBB8E             34      lea     smallBeam, a0
+00000052                            35      
+Line 36 ERROR: Undefined symbol
+00000052  43F9 004DBB8E             36      lea     KiBlastSound, a1
+00000058  7200                      37      move.l  #0,d1
+0000005A  7400                      38      move.l  #0,d2
+0000005C  7049                      39      move.l  #73,d0
+0000005E  4E4F                      40      Trap    #15
+00000060                            41      
+00000060                            42  drawPlayer1ProjectileRight
+00000060                            43      *spawn player to the right of the player sprite
+Line 44 ERROR: Undefined symbol
+00000060  2239 004DBB8E             44      move.l  Player1ProjectileWidth, d1
+Line 45 ERROR: Undefined symbol
+00000066  2439 004DBB8E             45      move.l  Player1ProjectileHeight, d2
+Line 46 ERROR: Undefined symbol
+0000006C  23F9 004DBB8E 00544480    46      move.l  Player1X, Player1ProjectileX
+Line 47 ERROR: Undefined symbol
+00000076  2039 004DBB8E             47      move.l  Player1ProjectileX, d0
+Line 48 ERROR: Undefined symbol
+0000007C  D0B9 004DBB8E             48      add.l   Player1Width, d0
+Line 49 ERROR: Undefined symbol
+00000082  23C0 00544480             49      move.l  d0, Player1ProjectileX
+Line 50 ERROR: Undefined symbol
+00000088  2639 004DBB8E             50      move.l  Player1ProjectileX, d3
+Line 51 ERROR: Undefined symbol
+0000008E  2839 004DBB8E             51      move.l  Player1Y, d4
+00000094                            52      *Shift player Y coordinate to get it out of stored remainder
+Line 53 ERROR: Undefined symbol
+00000094  EC8C                      53      lsr.l   #FRAC_BITS, d4
+Line 54 ERROR: Undefined symbol
+00000096  23C4 00544480             54      move.l  d4, Player1ProjectileY
+0000009C                            55      ;add.l   player1ProjectileOffset, player1ProjectileY
+Line 56 ERROR: Undefined symbol
+0000009C  06B9 0000000A 00544480    56      add.l   #10, player1ProjectileY
+Line 57 ERROR: Undefined symbol
+000000A6  2839 004DBB8E             57      move.l  Player1ProjectileY, d4
+Line 58 ERROR: Undefined symbol
+000000AC  23F9 004DBB8E 00544480    58      move.l  Player1ProjectileWidth, Player1ProjectileChunkX
+Line 59 ERROR: Undefined symbol
+000000B6  2A39 004DBB8E             59      move.l  Player1ProjectileChunkX, d5
+Line 60 ERROR: Undefined symbol
+000000BC  2C39 004DBB8E             60      move.l  Player1ProjectileChunkY, d6
+Line 61 ERROR: Undefined symbol
+000000C2  4EB9 004DBB8E             61      jsr     DRAWIMAGE
+000000C8  4E75                      62      rts
+000000CA                            63      
+000000CA                            64  spawnPlayer1ProjectileLeft
+000000CA                            65      *else, spawn the projectile left and update the boolean for left
+Line 66 ERROR: Undefined symbol
+000000CA  23FC 00000001 00544480    66      move.l  #1, Player1ProjectileLeft
+000000D4                            67      
+Line 68 ERROR: Undefined symbol
+000000D4  2039 004DBB8E             68      move.l  Player1ChunkY, d0
+000000DA  0C80 00000000             69      cmpi.l  #0, d0
+000000E0  6700 001A                 70      BEQ     drawTinyPlayer1ProjectileLeft
+000000E4                            71      
+Line 72 ERROR: Undefined symbol
+000000E4  41F9 004DBB8E             72      lea     BigBang, a0
+000000EA                            73      
+Line 74 ERROR: Undefined symbol
+000000EA  43F9 004DBB8E             74      lea     BigBangSound, a1
+000000F0  7200                      75      move.l  #0,d1
+000000F2  7400                      76      move.l  #0,d2
+000000F4  7049                      77      move.l  #73,d0
+000000F6  4E4F                      78      Trap    #15
+000000F8                            79      
+000000F8  6000 0016                 80      BRA     drawPlayer1ProjectileLeft
+000000FC                            81          
+000000FC                            82  drawTinyPlayer1ProjectileLeft
+Line 83 ERROR: Undefined symbol
+000000FC  41F9 004DBB8E             83      lea     smallBeam, a0
+Line 84 ERROR: Undefined symbol
+00000102  43F9 004DBB8E             84      lea     KiBlastSound, a1
+00000108  7200                      85      move.l  #0,d1
+0000010A  7400                      86      move.l  #0,d2
+0000010C  7049                      87      move.l  #73,d0
+0000010E  4E4F                      88      Trap    #15
+00000110                            89  
+00000110                            90  drawPlayer1ProjectileLeft
+Line 91 ERROR: Undefined symbol
+00000110  2239 004DBB8E             91      move.l  Player1ProjectileWidth, d1
+Line 92 ERROR: Undefined symbol
+00000116  2439 004DBB8E             92      move.l  Player1ProjectileHeight, d2
+Line 93 ERROR: Undefined symbol
+0000011C  23F9 004DBB8E 00544480    93      move.l  Player1X, Player1ProjectileX
+Line 94 ERROR: Undefined symbol
+00000126  2039 004DBB8E             94      move.l  Player1ProjectileX, d0
+Line 95 ERROR: Undefined symbol
+0000012C  90B9 004DBB8E             95      sub.l   Player1ProjectileWidth, d0
+Line 96 ERROR: Undefined symbol
+00000132  23C0 00544480             96      move.l  d0, Player1ProjectileX
+Line 97 ERROR: Undefined symbol
+00000138  2639 004DBB8E             97      move.l  Player1ProjectileX, d3
+Line 98 ERROR: Undefined symbol
+0000013E  2839 004DBB8E             98      move.l  Player1Y, d4
+Line 99 ERROR: Undefined symbol
+00000144  EC8C                      99      lsr.l   #FRAC_BITS, d4
+Line 100 ERROR: Undefined symbol
+00000146  23C4 00544480            100      move.l  d4, Player1ProjectileY
+Line 101 ERROR: Undefined symbol
+0000014C  06B9 0000000A 00544480   101      add.l   #10, Player1ProjectileY
+Line 102 ERROR: Undefined symbol
+00000156  2839 004DBB8E            102      move.l  Player1ProjectileY, d4
+Line 103 ERROR: Undefined symbol
+0000015C  23FC 00000000 00544480   103      move.l  #0, Player1ProjectileChunkX
+Line 104 ERROR: Undefined symbol
+00000166  2A39 004DBB8E            104      move.l  Player1ProjectileChunkX, d5
+Line 105 ERROR: Undefined symbol
+0000016C  2C39 004DBB8E            105      move.l  Player1ProjectileChunkY, d6
+Line 106 ERROR: Undefined symbol
+00000172  4EB9 004DBB8E            106      jsr     DRAWIMAGE
+00000178  4E75                     107      rts
+0000017A                           108      
+0000017A                           109  *Spawn Player 2 Projectile on either left of right similar to player 1
+0000017A                           110  spawnPlayer2Projectile
+Line 111 ERROR: Undefined symbol
+0000017A  23FC 00000001 00544480   111      move.l  #1, Player2ProjectileActive
+Line 112 ERROR: Undefined symbol
+00000184  2239 004DBB8E            112      move.l  Player2Left, d1
+0000018A  0C81 00000001            113      cmpi.l  #1, d1
+00000190  6700 00AE                114      BEQ     spawnPlayer2ProjectileLeft
+00000194                           115  spawnPlayer2ProjectileRight
+Line 116 ERROR: Undefined symbol
+00000194  23FC 00000000 00544480   116      move.l  #0, Player2ProjectileLeft
+0000019E                           117  
+0000019E                           118  
+Line 119 ERROR: Undefined symbol
+0000019E  2039 004DBB8E            119      move.l  Player2ChunkY, d0
+000001A4  0C80 00000000            120      cmpi.l  #0, d0
+000001AA  6700 001A                121      BEQ     drawTinyPlayer2ProjectileRight
+000001AE                           122      
+Line 123 ERROR: Undefined symbol
+000001AE  41F9 004DBB8E            123      lea     Kamehameha, a0
+000001B4                           124      
+Line 125 ERROR: Undefined symbol
+000001B4  43F9 004DBB8E            125      lea     KamehamehaSound, a1
+000001BA  7200                     126      move.l  #0,d1
+000001BC  7400                     127      move.l  #0,d2
+000001BE  7049                     128      move.l  #73,d0
+000001C0  4E4F                     129      Trap    #15
+000001C2                           130      
+000001C2  6000 0016                131      BRA     drawPlayer2ProjectileRight
+000001C6                           132      
+000001C6                           133      
+000001C6                           134      
+000001C6                           135  drawTinyPlayer2ProjectileRight
+Line 136 ERROR: Undefined symbol
+000001C6  41F9 004DBB8E            136      lea     smallBeam, a0
+000001CC                           137      
+Line 138 ERROR: Undefined symbol
+000001CC  43F9 004DBB8E            138      lea     KiBlastSound, a1
+000001D2  7200                     139      move.l  #0,d1
+000001D4  7400                     140      move.l  #0,d2
+000001D6  7049                     141      move.l  #73,d0
+000001D8  4E4F                     142      Trap    #15
+000001DA                           143      
+000001DA                           144  drawPlayer2ProjectileRight
+Line 145 ERROR: Undefined symbol
+000001DA  2239 004DBB8E            145      move.l  Player2ProjectileWidth, d1
+Line 146 ERROR: Undefined symbol
+000001E0  2439 004DBB8E            146      move.l  Player2ProjectileHeight, d2
+Line 147 ERROR: Undefined symbol
+000001E6  23F9 004DBB8E 00544480   147      move.l  Player2X, Player2ProjectileX
+Line 148 ERROR: Undefined symbol
+000001F0  2039 004DBB8E            148      move.l  Player2ProjectileX, d0
+Line 149 ERROR: Undefined symbol
+000001F6  D0B9 004DBB8E            149      add.l   Player2Width, d0
+Line 150 ERROR: Undefined symbol
+000001FC  23C0 00544480            150      move.l  d0, Player2ProjectileX
+Line 151 ERROR: Undefined symbol
+00000202  2639 004DBB8E            151      move.l  Player2ProjectileX, d3
+Line 152 ERROR: Undefined symbol
+00000208  2839 004DBB8E            152      move.l  Player2Y, d4
+0000020E  E88C                     153      lsr.l   #4, d4
+Line 154 ERROR: Undefined symbol
+00000210  23C4 00544480            154      move.l  d4, Player2ProjectileY
+Line 155 ERROR: Undefined symbol
+00000216  5BB9 00544480            155      sub.l   #5, Player2ProjectileY
+Line 156 ERROR: Undefined symbol
+0000021C  2839 004DBB8E            156      move.l  Player2ProjectileY, d4
+Line 157 ERROR: Undefined symbol
+00000222  23F9 004DBB8E 00544480   157      move.l  Player2ProjectileWidth, Player2ProjectileChunkX
+Line 158 ERROR: Undefined symbol
+0000022C  2A39 004DBB8E            158      move.l  Player2ProjectileChunkX, d5
+Line 159 ERROR: Undefined symbol
+00000232  2C39 004DBB8E            159      move.l  Player2ProjectileChunkY, d6
+Line 160 ERROR: Undefined symbol
+00000238  4EB9 004DBB8E            160      jsr     DRAWIMAGE
+0000023E  4E75                     161      rts
+00000240                           162  spawnPlayer2ProjectileLeft
+Line 163 ERROR: Undefined symbol
+00000240  23FC 00000001 00544480   163      move.l  #1, Player2ProjectileLeft
+0000024A                           164      
+Line 165 ERROR: Undefined symbol
+0000024A  2039 004DBB8E            165      move.l  Player2ChunkY, d0
+00000250  0C80 00000000            166      cmpi.l  #0, d0
+00000256  6700 001A                167      BEQ     drawTinyPlayer2ProjectileLeft
+0000025A                           168      
+Line 169 ERROR: Undefined symbol
+0000025A  41F9 004DBB8E            169      lea     Kamehameha, a0
+00000260                           170      
+Line 171 ERROR: Undefined symbol
+00000260  43F9 004DBB8E            171      lea     KamehamehaSound, a1
+00000266  7200                     172      move.l  #0,d1
+00000268  7400                     173      move.l  #0,d2
+0000026A  7049                     174      move.l  #73,d0
+0000026C  4E4F                     175      Trap    #15
+0000026E                           176      
+0000026E  6000 0016                177      BRA     drawPlayer2ProjectileLeft
+00000272                           178      
+00000272                           179      
+00000272                           180      
+00000272                           181  drawTinyPlayer2ProjectileLeft
+Line 182 ERROR: Undefined symbol
+00000272  41F9 004DBB8E            182      lea     smallBeam, a0
+00000278                           183      
+Line 184 ERROR: Undefined symbol
+00000278  43F9 004DBB8E            184      lea     KiBlastSound, a1
+0000027E  7200                     185      move.l  #0,d1
+00000280  7400                     186      move.l  #0,d2
+00000282  7049                     187      move.l  #73,d0
+00000284  4E4F                     188      Trap    #15
+00000286                           189  
+00000286                           190  drawPlayer2ProjectileLeft
+Line 191 ERROR: Undefined symbol
+00000286  2239 004DBB8E            191      move.l  Player2ProjectileWidth, d1
+Line 192 ERROR: Undefined symbol
+0000028C  2439 004DBB8E            192      move.l  Player2ProjectileHeight, d2
+Line 193 ERROR: Undefined symbol
+00000292  23F9 004DBB8E 00544480   193      move.l  Player2X, Player2ProjectileX
+Line 194 ERROR: Undefined symbol
+0000029C  2039 004DBB8E            194      move.l  Player2ProjectileX, d0
+Line 195 ERROR: Undefined symbol
+000002A2  90B9 004DBB8E            195      sub.l   Player2ProjectileWidth, d0
+Line 196 ERROR: Undefined symbol
+000002A8  23C0 00544480            196      move.l  d0, Player2ProjectileX
+Line 197 ERROR: Undefined symbol
+000002AE  2639 004DBB8E            197      move.l  Player2ProjectileX, d3
+Line 198 ERROR: Undefined symbol
+000002B4  2839 004DBB8E            198      move.l  Player2Y, d4
+Line 199 ERROR: Undefined symbol
+000002BA  EC8C                     199      lsr.l   #FRAC_BITS, d4
+Line 200 ERROR: Undefined symbol
+000002BC  23C4 00544480            200      move.l  d4, Player2ProjectileY
+Line 201 ERROR: Undefined symbol
+000002C2  5BB9 00544480            201      sub.l   #5, Player2ProjectileY
+Line 202 ERROR: Undefined symbol
+000002C8  2839 004DBB8E            202      move.l  Player2ProjectileY, d4
+Line 203 ERROR: Undefined symbol
+000002CE  23FC 00000000 00544480   203      move.l  #0, Player2ProjectileChunkX
+Line 204 ERROR: Undefined symbol
+000002D8  2A39 004DBB8E            204      move.l  Player2ProjectileChunkX, d5
+Line 205 ERROR: Undefined symbol
+000002DE  2C39 004DBB8E            205      move.l  Player2ProjectileChunkY, d6
+Line 206 ERROR: Undefined symbol
+000002E4  4EB9 004DBB8E            206      jsr     DRAWIMAGE
+000002EA  4E75                     207      rts
+000002EC                           208  
+000002EC                           209      
+000002EC                           210  
+000002EC                           211  
+000002EC                           212  updateProjectilesBackground
+Line 213 ERROR: Undefined symbol
+000002EC  2039 004DBB8E            213      move.l  Player1ProjectileActive, d0
+000002F2  0C80 00000001            214      cmpi.l  #1, d0
+000002F8  6600 02A6                215      BNE     exitProjectileUpdate
+000002FC                           216      
+Line 217 ERROR: Undefined symbol
+000002FC  41F9 004DBB8E            217      lea     BackGround, a0
+Line 218 ERROR: Undefined symbol
+00000302  2239 004DBB8E            218      move.l  Player1ProjectileWidth, d1
+Line 219 ERROR: Undefined symbol
+00000308  2439 004DBB8E            219      move.l  Player1ProjectileHeight, d2
+Line 220 ERROR: Undefined symbol
+0000030E  2639 004DBB8E            220      move.l  Player1ProjectileX, d3
+Line 221 ERROR: Undefined symbol
+00000314  2839 004DBB8E            221      move.l  Player1ProjectileY, d4
+Line 222 ERROR: Undefined symbol
+0000031A  2A39 004DBB8E            222      move.l  Player1ProjectileX, d5
+Line 223 ERROR: Undefined symbol
+00000320  2C39 004DBB8E            223      move.l  Player1ProjectileY, d6
+Line 224 ERROR: Undefined symbol
+00000326  4EB9 004DBB8E            224      jsr     DRAWIMAGE
+0000032C                           225      
+Line 226 ERROR: Undefined symbol
+0000032C  2039 004DBB8E            226      move.l  Player1ProjectileActive, d0
+00000332  0C80 00000001            227      cmpi.l  #1, d0
+00000338  6600 0266                228      BNE     exitProjectileUpdate
+0000033C                           229  
+Line 230 ERROR: Undefined symbol
+0000033C  2039 004DBB8E            230      move.l  Player1ProjectileLeft, d0
+00000342  0C80 00000001            231      cmpi.l  #1, d0
+00000348  6600 0082                232      BNE     updateProjectilesPositionRight
+0000034C                           233  
+0000034C                           234  updateProjectilesPositionLeft
+0000034C                           235      
+0000034C                           236      
+Line 237 ERROR: Undefined symbol
+0000034C  2039 004DBB8E            237      move.l  Player1ProjectileX, d0
+Line 238 ERROR: Undefined symbol
+00000352  90B9 004DBB8E            238      sub.l   ProjectileSpeed, d0
+Line 239 ERROR: Undefined symbol
+00000358  23C0 00544480            239      move.l  d0, Player1ProjectileX
+0000035E                           240  
+Line 241 ERROR: Undefined symbol
+0000035E  2039 004DBB8E            241      move.l  Player1ProjectileX, d0
+Line 242 ERROR: Undefined symbol
+00000364  D0B9 004DBB8E            242      add.l   Player1ProjectileWidth, d0
+0000036A  0C80 00000000            243      cmpi.l  #0, d0
+00000370  6E00 000C                244      BGT     moveProjectileLeft
+00000374                           245      
+Line 246 ERROR: Undefined symbol
+00000374  23FC 00000000 00544480   246      move.l  #0, Player1ProjectileActive
+0000037E                           247  
+0000037E                           248  moveProjectileLeft
+Line 249 ERROR: Undefined symbol
+0000037E  2039 004DBB8E            249      move.l  Player1ChunkY, d0
+00000384  0C80 00000000            250      cmpi.l  #0, d0
+0000038A  6700 000C                251      BEQ     updateTinyPlayer1ProjectileLeft
+0000038E                           252      
+Line 253 ERROR: Undefined symbol
+0000038E  41F9 004DBB8E            253      lea     BigBang, a0
+00000394  6000 0008                254      BRA     updateDrawProjectile1Left
+00000398                           255      
+00000398                           256  updateTinyPlayer1ProjectileLeft
+Line 257 ERROR: Undefined symbol
+00000398  41F9 004DBB8E            257      lea     smallBeam, a0
+0000039E                           258  
+0000039E                           259  updateDrawProjectile1Left
+0000039E                           260  
+Line 261 ERROR: Undefined symbol
+0000039E  2239 004DBB8E            261      move.l  Player1ProjectileWidth, d1
+Line 262 ERROR: Undefined symbol
+000003A4  2439 004DBB8E            262      move.l  Player1ProjectileHeight, d2
+Line 263 ERROR: Undefined symbol
+000003AA  2639 004DBB8E            263      move.l  Player1ProjectileX, d3
+Line 264 ERROR: Undefined symbol
+000003B0  2839 004DBB8E            264      move.l  Player1ProjectileY, d4
+Line 265 ERROR: Undefined symbol
+000003B6  2A39 004DBB8E            265      move.l  Player1ProjectileChunkX, d5
+Line 266 ERROR: Undefined symbol
+000003BC  2C39 004DBB8E            266      move.l  Player1ProjectileChunkY, d6
+Line 267 ERROR: Undefined symbol
+000003C2  4EB9 004DBB8E            267      jsr     DRAWIMAGE
+000003C8                           268      
+000003C8  6000 01D6                269      BRA     exitProjectileUpdate
+000003CC                           270      
+000003CC                           271  updateProjectilesPositionRight   
+Line 272 ERROR: Undefined symbol
+000003CC  2039 004DBB8E            272      move.l  Player1ProjectileX, d0
+Line 273 ERROR: Undefined symbol
+000003D2  D0B9 004DBB8E            273      add.l   ProjectileSpeed, d0
+Line 274 ERROR: Undefined symbol
+000003D8  23C0 00544480            274      move.l  d0, Player1ProjectileX
+000003DE                           275  
+Line 276 ERROR: Undefined symbol
+000003DE  2039 004DBB8E            276      move.l  Player1ProjectileX, d0
+000003E4  0C80 000002BC            277      cmpi.l  #700, d0
+000003EA  6D00 000C                278      BLT     moveProjectileRight
+000003EE                           279      
+Line 280 ERROR: Undefined symbol
+000003EE  23FC 00000000 00544480   280      move.l  #0, Player1ProjectileActive
+000003F8                           281  
+000003F8                           282  moveProjectileRight
+Line 283 ERROR: Undefined symbol
+000003F8  2039 004DBB8E            283      move.l  Player1ChunkY, d0
+000003FE  0C80 00000000            284      cmpi.l  #0, d0
+00000404  6700 000C                285      BEQ     updateTinyPlayer1ProjectileRight
+00000408                           286      
+Line 287 ERROR: Undefined symbol
+00000408  41F9 004DBB8E            287      lea     BigBang, a0
+0000040E  6000 0008                288      BRA     updateDrawProjectile1Right
+00000412                           289      
+00000412                           290  updateTinyPlayer1ProjectileRight
+Line 291 ERROR: Undefined symbol
+00000412  41F9 004DBB8E            291      lea     smallBeam, a0
+00000418                           292  
+00000418                           293  updateDrawProjectile1Right
+Line 294 ERROR: Undefined symbol
+00000418  2239 004DBB8E            294      move.l  Player1ProjectileWidth, d1
+Line 295 ERROR: Undefined symbol
+0000041E  2439 004DBB8E            295      move.l  Player1ProjectileHeight, d2
+Line 296 ERROR: Undefined symbol
+00000424  2639 004DBB8E            296      move.l  Player1ProjectileX, d3
+Line 297 ERROR: Undefined symbol
+0000042A  2839 004DBB8E            297      move.l  Player1ProjectileY, d4
+Line 298 ERROR: Undefined symbol
+00000430  2A39 004DBB8E            298      move.l  Player1ProjectileChunkX, d5
+Line 299 ERROR: Undefined symbol
+00000436  2C39 004DBB8E            299      move.l  Player1ProjectileChunkY, d6
+Line 300 ERROR: Undefined symbol
+0000043C  4EB9 004DBB8E            300      jsr     DRAWIMAGE
+00000442                           301      
+00000442  6000 015C                302      BRA     exitProjectileUpdate
+00000446                           303      
+00000446                           304  *update Player 2 projectiles
+00000446                           305  updateProjectile2Background
+Line 306 ERROR: Undefined symbol
+00000446  2039 004DBB8E            306      move.l  Player2ProjectileActive, d0
+0000044C  0C80 00000001            307      cmpi.l  #1, d0
+00000452  6600 014C                308      BNE     exitProjectileUpdate
+00000456                           309  
+Line 310 ERROR: Undefined symbol
+00000456  41F9 004DBB8E            310      lea     BackGround, a0
+Line 311 ERROR: Undefined symbol
+0000045C  2239 004DBB8E            311      move.l  Player2ProjectileWidth, d1
+Line 312 ERROR: Undefined symbol
+00000462  2439 004DBB8E            312      move.l  Player2ProjectileHeight, d2
+Line 313 ERROR: Undefined symbol
+00000468  2639 004DBB8E            313      move.l  Player2ProjectileX, d3
+Line 314 ERROR: Undefined symbol
+0000046E  2839 004DBB8E            314      move.l  Player2ProjectileY, d4
+Line 315 ERROR: Undefined symbol
+00000474  2A39 004DBB8E            315      move.l  Player2ProjectileX, d5
+Line 316 ERROR: Undefined symbol
+0000047A  2C39 004DBB8E            316      move.l  Player2ProjectileY, d6
+Line 317 ERROR: Undefined symbol
+00000480  4EB9 004DBB8E            317      jsr     DRAWIMAGE
+00000486                           318      
+Line 319 ERROR: Undefined symbol
+00000486  2039 004DBB8E            319      move.l  Player2ProjectileActive, d0
+0000048C  0C80 00000001            320      cmpi.l  #1, d0
+00000492  6600 010C                321      BNE     exitProjectileUpdate
+00000496                           322  
+Line 323 ERROR: Undefined symbol
+00000496  2039 004DBB8E            323      move.l  Player2ProjectileLeft, d0
+0000049C  0C80 00000001            324      cmpi.l  #1, d0
+000004A2  6600 0082                325      BNE     updateProjectile2PositionRight
+000004A6                           326  
+000004A6                           327  updateProjectile2PositionLeft
+000004A6                           328      
+000004A6                           329      
+Line 330 ERROR: Undefined symbol
+000004A6  2039 004DBB8E            330      move.l  Player2ProjectileX, d0
+Line 331 ERROR: Undefined symbol
+000004AC  90B9 004DBB8E            331      sub.l   ProjectileSpeed, d0
+Line 332 ERROR: Undefined symbol
+000004B2  23C0 00544480            332      move.l  d0, Player2ProjectileX
+000004B8                           333  
+Line 334 ERROR: Undefined symbol
+000004B8  2039 004DBB8E            334      move.l  Player2ProjectileX, d0
+Line 335 ERROR: Undefined symbol
+000004BE  D0B9 004DBB8E            335      add.l   Player2ProjectileWidth, d0
+000004C4  0C80 00000000            336      cmpi.l  #0, d0
+000004CA  6E00 0086                337      BGT     moveProjectile2Right
+000004CE                           338      
+Line 339 ERROR: Undefined symbol
+000004CE  23FC 00000000 00544480   339      move.l  #0, Player2ProjectileActive
+000004D8                           340  
+000004D8                           341  moveProjectile2Left
+Line 342 ERROR: Undefined symbol
+000004D8  2039 004DBB8E            342      move.l  Player2ChunkY, d0
+000004DE  0C80 00000000            343      cmpi.l  #0, d0
+000004E4  6700 000C                344      BEQ     updateTinyPlayer2ProjectileLeft
+000004E8                           345      
+Line 346 ERROR: Undefined symbol
+000004E8  41F9 004DBB8E            346      lea     Kamehameha, a0
+000004EE  6000 0008                347      BRA     updateDrawProjectile2Left
+000004F2                           348      
+000004F2                           349  updateTinyPlayer2ProjectileLeft
+Line 350 ERROR: Undefined symbol
+000004F2  41F9 004DBB8E            350      lea     smallBeam, a0
+000004F8                           351  
+000004F8                           352  updateDrawProjectile2Left
+Line 353 ERROR: Undefined symbol
+000004F8  2239 004DBB8E            353      move.l  Player2ProjectileWidth, d1
+Line 354 ERROR: Undefined symbol
+000004FE  2439 004DBB8E            354      move.l  Player2ProjectileHeight, d2
+Line 355 ERROR: Undefined symbol
+00000504  2639 004DBB8E            355      move.l  Player2ProjectileX, d3
+Line 356 ERROR: Undefined symbol
+0000050A  2839 004DBB8E            356      move.l  Player2ProjectileY, d4
+Line 357 ERROR: Undefined symbol
+00000510  2A39 004DBB8E            357      move.l  Player2ProjectileChunkX, d5
+Line 358 ERROR: Undefined symbol
+00000516  2C39 004DBB8E            358      move.l  Player2ProjectileChunkY, d6
+Line 359 ERROR: Undefined symbol
+0000051C  4EB9 004DBB8E            359      jsr     DRAWIMAGE
+00000522                           360      
+00000522  6000 007C                361      BRA     exitProjectileUpdate
+00000526                           362      
+00000526                           363  updateProjectile2PositionRight   
+Line 364 ERROR: Undefined symbol
+00000526  2039 004DBB8E            364      move.l  Player2ProjectileX, d0
+Line 365 ERROR: Undefined symbol
+0000052C  D0B9 004DBB8E            365      add.l   ProjectileSpeed, d0
+Line 366 ERROR: Undefined symbol
+00000532  23C0 00544480            366      move.l  d0, Player2ProjectileX
+00000538                           367  
+Line 368 ERROR: Undefined symbol
+00000538  2039 004DBB8E            368      move.l  Player2ProjectileX, d0
+0000053E  0C80 000002BC            369      cmpi.l  #700, d0
+00000544  6D00 000C                370      BLT     moveProjectile2Right
+00000548                           371      
+Line 372 ERROR: Undefined symbol
+00000548  23FC 00000000 00544480   372      move.l  #0, Player2ProjectileActive
+00000552                           373  
+00000552                           374  moveProjectile2Right
+Line 375 ERROR: Undefined symbol
+00000552  2039 004DBB8E            375      move.l  Player2ChunkY, d0
+00000558  0C80 00000000            376      cmpi.l  #0, d0
+0000055E  6700 000C                377      BEQ     updateTinyPlayer2ProjectileRight
+00000562                           378      
+Line 379 ERROR: Undefined symbol
+00000562  41F9 004DBB8E            379      lea     Kamehameha, a0
+00000568  6000 0008                380      BRA     updateDrawProjectile2Right
+0000056C                           381      
+0000056C                           382  updateTinyPlayer2ProjectileRight
+Line 383 ERROR: Undefined symbol
+0000056C  41F9 004DBB8E            383      lea     smallBeam, a0
+00000572                           384  
+00000572                           385  updateDrawProjectile2Right
+Line 386 ERROR: Undefined symbol
+00000572  2239 004DBB8E            386      move.l  Player2ProjectileWidth, d1
+Line 387 ERROR: Undefined symbol
+00000578  2439 004DBB8E            387      move.l  Player2ProjectileHeight, d2
+Line 388 ERROR: Undefined symbol
+0000057E  2639 004DBB8E            388      move.l  Player2ProjectileX, d3
+Line 389 ERROR: Undefined symbol
+00000584  2839 004DBB8E            389      move.l  Player2ProjectileY, d4
+Line 390 ERROR: Undefined symbol
+0000058A  2A39 004DBB8E            390      move.l  Player2ProjectileChunkX, d5
+Line 391 ERROR: Undefined symbol
+00000590  2C39 004DBB8E            391      move.l  Player2ProjectileChunkY, d6
+Line 392 ERROR: Undefined symbol
+00000596  4EB9 004DBB8E            392      jsr     DRAWIMAGE
+0000059C                           393      
+0000059C  6000 0002                394      BRA     exitProjectileUpdate
+000005A0                           395      
+000005A0                           396      
+000005A0                           397      
+000005A0                           398  *Player2 move projectile    
+000005A0                           399  exitProjectileUpdate
+000005A0  4E75                     400      rts
+000005A2                           401  
+000005A2                           402   
+000005A2                           403  
+000005A2                           404  
+000005A2                           405  
+000005A2                           406  
+000005A2                           407  
+000005A2                           408  
+000005A2                           409  
+Line 410 WARNING: END directive missing, starting address not set
+
+175 errors detected
+1 warning generated
+
+
+SYMBOL TABLE INFORMATION
+Symbol-name         Value
+-------------------------
+DRAWPLAYER1PROJECTILELEFT  110
+DRAWPLAYER1PROJECTILERIGHT  60
+DRAWPLAYER2PROJECTILELEFT  286
+DRAWPLAYER2PROJECTILERIGHT  1DA
+DRAWTINYPLAYER1PROJECTILELEFT  FC
+DRAWTINYPLAYER1PROJECTILERIGHT  4C
+DRAWTINYPLAYER2PROJECTILELEFT  272
+DRAWTINYPLAYER2PROJECTILERIGHT  1C6
+EXITPROJECTILEUPDATE  5A0
+MOVEPROJECTILE2LEFT  4D8
+MOVEPROJECTILE2RIGHT  552
+MOVEPROJECTILELEFT  37E
+MOVEPROJECTILERIGHT  3F8
+SPAWNPLAYER1PROJECTILE  0
+SPAWNPLAYER1PROJECTILELEFT  CA
+SPAWNPLAYER1PROJECTILERIGHT  1A
+SPAWNPLAYER2PROJECTILE  17A
+SPAWNPLAYER2PROJECTILELEFT  240
+SPAWNPLAYER2PROJECTILERIGHT  194
+UPDATEDRAWPROJECTILE1LEFT  39E
+UPDATEDRAWPROJECTILE1RIGHT  418
+UPDATEDRAWPROJECTILE2LEFT  4F8
+UPDATEDRAWPROJECTILE2RIGHT  572
+UPDATEPROJECTILE2BACKGROUND  446
+UPDATEPROJECTILE2POSITIONLEFT  4A6
+UPDATEPROJECTILE2POSITIONRIGHT  526
+UPDATEPROJECTILESBACKGROUND  2EC
+UPDATEPROJECTILESPOSITIONLEFT  34C
+UPDATEPROJECTILESPOSITIONRIGHT  3CC
+UPDATETINYPLAYER1PROJECTILELEFT  398
+UPDATETINYPLAYER1PROJECTILERIGHT  412
+UPDATETINYPLAYER2PROJECTILELEFT  4F2
+UPDATETINYPLAYER2PROJECTILERIGHT  56C

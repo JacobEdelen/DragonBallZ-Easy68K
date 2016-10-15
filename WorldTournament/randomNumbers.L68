@@ -1,0 +1,96 @@
+00000000 Starting Address
+Assembler used: EASy68K Editor/Assembler v5.15.04
+Created On: 10/13/2016 8:51:16 PM
+
+00000000                             1  
+00000000                             2  ALL_REG                 REG     D0-D7/A0-A6
+00000000                             3  
+00000000  =00000008                  4  GET_TIME_COMMAND        equ     8
+00000000                             5  
+00000000                             6  
+00000000                             7  
+00000000                             8  seedRandomNumber
+00000000  48E7 FFFE                  9          movem.l ALL_REG,-(sp)
+00000004  4286                      10          clr.l   d6
+00000006  103C 0008                 11          move.b  #GET_TIME_COMMAND,d0
+0000000A  4E4F                      12          TRAP    #15
+0000000C                            13  
+0000000C  23C1 00000090             14          move.l  d1,RANDOMVAL
+00000012  4CDF 7FFF                 15          movem.l (sp)+,ALL_REG
+00000016  4E75                      16          rts
+00000018                            17  
+00000018                            18  getRandomByteIntoD6
+00000018  48E7 8000                 19          movem.l d0,-(sp)
+0000001C  48E7 4000                 20          movem.l d1,-(sp)
+00000020  48E7 2000                 21          movem.l d2,-(sp)
+00000024  2039 00000090             22          move.l  RANDOMVAL,d0
+0000002A  72AF                      23          moveq   #$AF-$100,d1
+0000002C  7412                      24          moveq   #18,d2
+0000002E                            25  Ninc0   
+0000002E  D080                      26          add.l   d0,d0
+00000030  6400 0004                 27          bcc     Ninc1
+00000034  B300                      28          eor.b   d1,d0
+00000036                            29  Ninc1
+00000036  51CA FFF6                 30          dbf     d2,Ninc0
+0000003A                            31          
+0000003A  23C0 00000090             32          move.l  d0,RANDOMVAL
+00000040  4286                      33          clr.l   d6
+00000042  1C00                      34          move.b  d0,d6
+00000044  2A06                      35          move.l  d6, d5
+00000046                            36          
+00000046                            37          ;add 5 "seconds" in case the value is 0 and spawns powerup immeadiately
+00000046  0685 0000012C             38          add.l   #300, d5
+0000004C  2C05                      39          move.l  d5, d6
+0000004E                            40          
+0000004E  4CDF 0004                 41          movem.l (sp)+,d2
+00000052  4CDF 0002                 42          movem.l (sp)+,d1
+00000056  4CDF 0001                 43          movem.l (sp)+,d0
+0000005A  4E75                      44          rts
+0000005C                            45          
+0000005C                            46  
+0000005C                            47  getRandomLongIntoD6
+0000005C  48E7 FFFE                 48          movem.l ALL_REG,-(sp)
+00000060  4EB8 0018                 49          jsr     getRandomByteIntoD6
+00000064  1A06                      50          move.b  d6,d5
+00000066  4EB8 0018                 51          jsr     getRandomByteIntoD6
+0000006A  E18D                      52          lsl.l   #8,d5
+0000006C  1A06                      53          move.b  d6,d5
+0000006E  4EB8 0018                 54          jsr     getRandomByteIntoD6
+00000072  E18D                      55          lsl.l   #8,d5
+00000074  1A06                      56          move.b  d6,d5
+00000076  4EB8 0018                 57          jsr     getRandomByteIntoD6
+0000007A  E18D                      58          lsl.l   #8,d5
+0000007C  1A06                      59          move.b  d6,d5
+0000007E  23C5 00000094             60          move.l  d5,TEMPRANDOMLONG
+00000084  4CDF 7FFF                 61          movem.l (sp)+,ALL_REG
+00000088  2C39 00000094             62          move.l  TEMPRANDOMLONG,d6
+0000008E  4E75                      63          rts
+00000090                            64  
+00000090                            65  
+00000090                            66  RANDOMVAL       ds.l    1
+00000094                            67  TEMPRANDOMLONG  ds.l    1
+00000098                            68  
+00000098                            69  
+00000098                            70  
+00000098                            71  
+00000098                            72  
+00000098                            73  
+00000098                            74  
+Line 75 WARNING: END directive missing, starting address not set
+
+No errors detected
+1 warning generated
+
+
+SYMBOL TABLE INFORMATION
+Symbol-name         Value
+-------------------------
+ALL_REG             7FFF
+GETRANDOMBYTEINTOD6  18
+GETRANDOMLONGINTOD6  5C
+GET_TIME_COMMAND    8
+NINC0               2E
+NINC1               36
+RANDOMVAL           90
+SEEDRANDOMNUMBER    0
+TEMPRANDOMLONG      94

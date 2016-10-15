@@ -1,0 +1,313 @@
+00000000 Starting Address
+Assembler used: EASy68K Editor/Assembler v5.15.04
+Created On: 10/6/2016 11:30:05 AM
+
+00000000                             1  *-----------------------------------------------------------
+00000000                             2  * Written by    :Jacob Edelen
+00000000                             3  * Date Created  :9/7/2016
+00000000                             4  * Description   :Takes in 7 arguments to a subroutine and runs the method to 
+00000000                             5  *                draw a section of an image in the console
+00000000                             6  *
+00000000                             7  *-----------------------------------------------------------
+00000000                             8  
+00000000                             9  ;EQUs for trap code calls
+00000000  =00000050                 10  PenColorCode      EQU     80
+00000000  =00000052                 11  DrawPixelCode     EQU     82
+00000000  =00000021                 12  ScreenChangeCode  EQU     33
+00000000                            13  
+00000000                            14  DrawChunk
+00000000                            15  ;reads in file information and user input
+00000000                            16  ;and sets the variables at the bottom and on stack
+00000000                            17  ;which will be used to draw the chunk of the bmp file
+00000000                            18  
+00000000  206F 0004                 19          move.l  4(sp), a0               ;store the pointer to the image data into an address for access
+00000004  2028 000A                 20          move.l  10(a0), d0              ;grab the offset from header to pixels
+00000008  E158                      21          rol.w   #8, d0                  ;rotate the word by 8 to move offset to appropriate position          
+0000000A  4840                      22          swap    d0                      ;now swap the words of the offset for the next rotate
+0000000C  E158                      23          rol.w   #8, d0                  ;finally rotate the words one time to make the true offset value readable
+0000000E  D0C0                      24          add.w   d0, a0                  ;change position in memory to pixel data
+00000010                            25          
+00000010  4284                      26          clr.l   d4
+00000012  282F 0024                 27          move.l  36(sp),d4
+00000016  2A2F 0014                 28          move.l  20(sp), d5
+0000001A  DAAF 000C                 29          add.l   12(sp), d5
+0000001E  9885                      30          sub.l   d5, d4
+00000020  4285                      31          clr.l   d5
+00000022  3A04                      32          move.w  d4, d5
+00000024  4284                      33          clr.l   d4
+00000026  C8FC 0003                 34          mulu.w  #3, d4
+0000002A                            35          
+0000002A  282F 0020                 36          move.l  32(sp), d4
+0000002E                            37          
+0000002E  CAC4                      38          mulu.w  d4, d5
+00000030                            39          
+00000030                            40          ;mulu.w  #3, d5
+00000030                            41          
+00000030                            42          ;add.l   d5, a0
+00000030                            43          ;add.l   d5, a0 
+00000030                            44          ;add.l   d5, a0    
+00000030                            45           
+00000030                            46           
+00000030                            47           
+00000030                            48                 
+00000030  262F 000C                 49          move.l  12(sp), d3
+00000034                            50          ;sub.l   20(sp), d3
+00000034                            51          
+00000034                            52  OUTERLOOP
+00000034  3C3C 0000                 53          move.w  #0, d6                  ;set or reset x counter for for loop
+00000038  282F 0010                 54          move.l  16(sp), d4
+0000003C  C8FC 0003                 55          mulu.w  #3, d4
+00000040  D0C4                      56          add.w   d4, a0              ;add start of x to 0
+00000042                            57          
+00000042                            58  INNERLOOP
+00000042  4284                      59          clr.l   d4                      ;make sure d4 has nothing in it
+00000044  1818                      60          move.b  (a0)+,d4                ;grab the first pixel
+00000046  4844                      61          swap.w  d4                      ;swap the pixel to change its position in memory for the rest of the pixel data
+00000048  4285                      62          clr.l   d5                      ;make sure d5 is also clear
+0000004A  2A04                      63          move.l  d4, d5                  ;store previously found pixel data in d5 for next value
+0000004C  4284                      64          clr.l   d4                      ;clear d4 for the next bit of memory
+0000004E  1818                      65          move.b  (a0)+, d4               ;grab next memory bit
+00000050  E14C                      66          lsl     #8, d4                  ;shift left to get pixel in top of second word to combine with previous pixel bit
+00000052  DA84                      67          add.l   d4, d5                  ;combine the data
+00000054  4284                      68          clr.l   d4                      ;clear d4 once again
+00000056  1818                      69          move.b  (a0)+, d4               ;get last bit needed
+00000058  DA84                      70          add.l   d4, d5                  ;combine it to the end of the previous two bits to get the pixel value
+0000005A                            71          
+0000005A  4284                      72          clr.l   d4
+0000005C  1838 00FF                 73          move.b  $FF, d4
+00000060  4844                      74          swap    d4
+00000062  1838 00FF                 75          move.b  $FF, d4
+00000066                            76          
+00000066  BA44                      77          cmp     d4, d5
+00000068  6700 0006                 78          BEQ     INCREMENT
+0000006C                            79          
+0000006C  6000 0044                 80          BRA     DRAWPIXEL               ;pixel meets criteria and can be printed
+00000070                            81          
+00000070                            82  INCREMENT
+00000070  4284                      83          clr.l   d4                      ;make sure d4 is empty for use  
+00000072  5246                      84          add.w   #1,d6                   ;increment x counter by one
+00000074                            85          
+00000074  282F 0010                 86          move.l  16(sp), d4
+00000078  D886                      87          add.l   d6, d4
+0000007A  2A2F 0020                 88          move.l  32(sp), d5
+0000007E  B845                      89          cmp     d5, d4
+00000080  6700 0022                 90          BEQ     INCREMENTY
+00000084                            91        
+00000084  282F 0008                 92          move.l  8(sp), d4              ;move width of image into register
+00000088  BC44                      93          cmp     d4, d6                  ;see if counter is beyond x bounds
+0000008A  66B6                      94          BNE     INNERLOOP               ;if it is not, loop again
+0000008C                            95          
+0000008C                            96          ;skip after outside of box on x axis
+0000008C  4284                      97          clr.l   d4
+0000008E  282F 0010                 98          move.l  16(sp), d4
+00000092  D8AF 0008                 99          add.l   8(sp), d4
+00000096  4285                     100          clr.l   d5
+00000098  2A2F 0020                101          move.l  32(sp), d5
+0000009C  9A84                     102          sub.l   d4, d5
+0000009E  CAFC 0003                103          mulu.w  #3, d5
+000000A2                           104          ;add offset to address
+000000A2  D1C5                     105          add.l   d5, a0
+000000A4                           106  
+000000A4                           107  INCREMENTY        
+000000A4                           108          ;take care of padding
+000000A4  D1F9 00133BC2            109          add.l   Padding, a0             ;add padding.  If there is none, the address won't skip anything
+000000AA                           110          
+000000AA  5343                     111          sub.w   #1, d3                  ;decrement y counter to see if you are out of the y iteration
+000000AC  6686                     112          BNE     OUTERLOOP               ;if it is not, loop back to outer loop
+000000AE  6000 001A                113          BRA     ENDROUTINE              ;branch to end of subroutine, whole image has been iterated
+000000B2                           114          
+000000B2                           115  DRAWPIXEL
+000000B2  2205                     116          move.l  d5, d1                  ;move pixel data into d1 for pen color
+000000B4  7050                     117          move.l  #PenColorCode, d0       ;set trap code for setting the pen color
+000000B6  4E4F                     118          trap    #15                     ;set pen color
+000000B8                           119                           
+000000B8  222F 0018                120          move.l   24(sp), d1             ;store the starting x position of the chunk
+000000BC  D286                     121          add.l    d6, d1                 ;add iteration position of x to start of chunk
+000000BE                           122          ;sub.l    16(sp), d1             ;move width back to start printing in appropriate position
+000000BE                           123          
+000000BE  242F 001C                124          move.l  28(sp), d2              ;start at top of chunk to flip image
+000000C2  D483                     125          add.l   d3, d2                  ;subtract current y position
+000000C4                           126          ;add.l   20(sp), d2              ;move starting height point back to appropriate printing position
+000000C4                           127          ;sub.l   28(sp), d2
+000000C4  7052                     128          move.l  #DrawPixelCode, d0      ;Set trap code to draw pixel at position
+000000C6  4E4F                     129          trap    #15                     ;draw pixel at position
+000000C8                           130          
+000000C8  60A6                     131          BRA     INCREMENT               ;increment position
+000000CA                           132          
+000000CA                           133  ENDROUTINE
+000000CA  4E75                     134          rts                             ;branch back to end of program
+000000CC                           135  
+000000CC                           136  ;START   ORG     $1000
+000000CC                           137  
+000000CC                           138  DRAWIMAGE
+000000CC                           139  *...
+000000CC                           140  *setup before subroutine
+000000CC                           141  *...'
+000000CC                           142  
+000000CC                           143          ;change size of terminal
+000000CC                           144          ;move.b  #(ScreenChangeCode) , d0
+000000CC                           145          ;move.l  #700*$10000+600, d1
+000000CC                           146          ;trap    #15
+000000CC                           147          
+000000CC  7024                     148          move.l  #36, d0                 ;number of 7 4 byte arguments to prepare stack to receive
+000000CE  9FC0                     149          sub.l   d0, sp                  ;prepare stack to receive arguments
+000000D0                           150          
+000000D0  23C1 00133BAA            151          move.l  d1, ChunkWidth
+000000D6  23C2 00133BAE            152          move.l  d2, ChunkHeight
+000000DC  23C3 00133BB2            153          move.l  d3, ImageStartX
+000000E2  23C4 00133BB6            154          move.l  d4, ImageStartY
+000000E8  23C5 00133BA2            155          move.l  d5, StartChunkX
+000000EE  23C6 00133BA6            156          move.l  d6, StartChunkY 
+000000F4                           157          
+000000F4                           158          ;lea     FileToDraw, a0          ;load file into address 0 to load onto stack
+000000F4  2E88                     159          move.l  a0, (sp)                ;load pointer to the .bmp file onto the stack
+000000F6                           160          
+000000F6  2239 00133BAA            161          move.l  ChunkWidth, d1          ;store width of chunk on the stack
+000000FC  2F41 0004                162          move.l  d1, 4(sp)
+00000100  2439 00133BAE            163          move.l  ChunkHeight, d2         ;store height of the chunk on the stack 
+00000106  2F42 0008                164          move.l  d2, 8(sp)               
+0000010A                           165          
+0000010A  2239 00133BA2            166          move.l    StartChunkX, d1        ;add start of chunk to move with image
+00000110  2F41 000C                167          move.l   d1, 12(sp)             ;store Top left x of draw chunk on stack
+00000114                           168          
+00000114  2439 00133BA6            169          move.l   StartChunkY, d2        ;subtract y position from height to get start y
+0000011A  2F42 0010                170          move.l  d2, 16(sp)              ;store Top left y of draw chunk on stack                      
+0000011E                           171  
+0000011E                           172  
+0000011E                           173          
+0000011E  2228 0012                174          move.l  18(a0), d1              ;get width of image from .bmp file
+00000122  E159                     175          rol.w   #8, d1          
+00000124  4841                     176          swap    d1
+00000126  E159                     177          rol.w   #8, d1                  ;rotate and swap long word to get true width value to use later
+00000128  23C1 00133BBA            178          move.l  d1, ImageWidth          ;store width for later use
+0000012E  2F79 00133BBA 001C       179          move.l  ImageWidth, 28(sp)      ;store width of image to make variable not global
+00000136                           180  
+00000136                           181          
+00000136                           182          ;calculate for padding.  
+00000136                           183          ;This only concerns width
+00000136  7404                     184          move.l  #4, d2                  ;move 4 into register for padding calculation
+00000138  C2FC 0003                185          mulu.w  #3, d1                  ;multiply image width by 3 for formula
+0000013C  82FC 0004                186          divu.w  #4, d1                  ;divide by four to find remainder
+00000140  4841                     187          swap    d1                      ;swap remainder into lower word
+00000142  4284                     188          clr.l   d4                      ;make sure d4 is empty
+00000144  383C 0000                189          move.w  #0, d4                  ;move 0 into d4 
+00000148  B841                     190          cmp.w   d1, d4                  ;if equal, there is no padding
+0000014A  6700 000A                191          BEQ     RUNPROGRAM              ;continue in program for special case of being divisible by 4
+0000014E                           192          
+0000014E                           193  ACCOUNTFORPADDING
+0000014E  9441                     194          sub.w   d1, d2                  ;subtract remainder from 4 to get padding
+00000150  23C2 00133BC2            195          move.l  d2, Padding             ;store padding for later use
+00000156                           196          
+00000156                           197          
+00000156                           198  RUNPROGRAM       
+00000156  2428 0016                199          move.l  22(a0), d2              ;get height of image from .bmp file
+0000015A  E15A                     200          rol.w   #8, d2          
+0000015C  4842                     201          swap    d2
+0000015E  E15A                     202          rol.w   #8, d2                  ;rotate and swap long word to get true height value to use later
+00000160  23C2 00133BBE            203          move.l  d2, ImageHeight         ;store height for later use
+00000166  2F79 00133BBE 0020       204          move.l  ImageHeight, 32(sp)     ;store height of image to make variable not global
+0000016E                           205  
+0000016E                           206  
+0000016E                           207  
+0000016E  2F79 00133BB2 0014       208          move.l  ImageStartX, 20(sp)     ;store Beginning print location for x axis on stack
+00000176  2F79 00133BB6 0018       209          move.l  ImageStartY, 24(sp)     ;store Beginning print location for y axis on stack
+0000017E                           210          
+0000017E  4EB8 0000                211          jsr     DrawChunk               ;call subroutine to draw chunk of image       
+00000182                           212         
+00000182  4280                     213          clr.l   d0
+00000184  7024                     214          move.l  #36, d0                
+00000186  DFC0                     215          add.l   d0, sp                  ;fix stack
+00000188                           216          
+00000188  4287                     217          clr.l   d7
+0000018A                           218          
+0000018A  4E75                     219          rts
+0000018C                           220                 
+0000018C                           221  
+0000018C                           222          
+0000018C                           223  ;END
+0000018C                           224  ;        move.l  #$9,d0                  ;halt program at the end to view console
+0000018C                           225  ;        TRAP #15
+0000018C                           226          
+0000018C                           227  ;        STOP #$2000
+0000018C                           228  
+0000018C                           229  
+0000018C                           230  FileToDraw
+0000018C                           231          INCBIN "worldTournamentResized.bmp"
+00133BA2                           232  StartChunkX 
+00133BA2= 00000000                 233          dc.l    0
+00133BA6                           234  StartChunkY
+00133BA6= 00000000                 235          dc.l    0
+00133BAA                           236  ChunkWidth
+00133BAA= 000002BC                 237          dc.l    700
+00133BAE                           238  ChunkHeight
+00133BAE= 00000258                 239          dc.l    600
+00133BB2                           240  ImageStartX
+00133BB2= 00000000                 241          dc.l    0
+00133BB6                           242  ImageStartY
+00133BB6= 00000000                 243          dc.l    0
+00133BBA                           244  ImageWidth
+00133BBA= 00000000                 245          dc.l    0
+00133BBE                           246  ImageHeight
+00133BBE= 00000000                 247          dc.l    0
+00133BC2                           248  Padding
+00133BC2= 00000000                 249          dc.l    0
+00133BC6                           250  
+00133BC6                           251  
+00133BC6                           252  ;        END     START
+00133BC6                           253  
+00133BC6                           254  
+00133BC6                           255  
+00133BC6                           256  
+00133BC6                           257  
+00133BC6                           258  
+00133BC6                           259  
+00133BC6                           260  
+00133BC6                           261  
+00133BC6                           262  
+00133BC6                           263  
+00133BC6                           264  
+00133BC6                           265  
+00133BC6                           266  
+00133BC6                           267  
+00133BC6                           268  
+00133BC6                           269  
+00133BC6                           270  
+00133BC6                           271  
+00133BC6                           272  
+00133BC6                           273  
+00133BC6                           274  
+00133BC6                           275  
+00133BC6                           276  
+00133BC6                           277  
+Line 278 WARNING: END directive missing, starting address not set
+
+No errors detected
+1 warning generated
+
+
+SYMBOL TABLE INFORMATION
+Symbol-name         Value
+-------------------------
+ACCOUNTFORPADDING   14E
+CHUNKHEIGHT         133BAE
+CHUNKWIDTH          133BAA
+DRAWCHUNK           0
+DRAWIMAGE           CC
+DRAWPIXEL           B2
+DRAWPIXELCODE       52
+ENDROUTINE          CA
+FILETODRAW          18C
+IMAGEHEIGHT         133BBE
+IMAGESTARTX         133BB2
+IMAGESTARTY         133BB6
+IMAGEWIDTH          133BBA
+INCREMENT           70
+INCREMENTY          A4
+INNERLOOP           42
+OUTERLOOP           34
+PADDING             133BC2
+PENCOLORCODE        50
+RUNPROGRAM          156
+SCREENCHANGECODE    21
+STARTCHUNKX         133BA2
+STARTCHUNKY         133BA6

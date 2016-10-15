@@ -1,0 +1,595 @@
+00000000 Starting Address
+Assembler used: EASy68K Editor/Assembler v5.15.04
+Created On: 10/14/2016 3:58:30 AM
+
+00000000                             1  *Still need to document
+00000000                             2  
+00000000                             3  
+00000000                             4  ALL_REG                 REG     D0-D7/A0-A6
+00000000  =00000013                  5  GET_KEY_INPUT_COMMAND   equ     19        
+00000000                             6  
+00000000                             7  initPlayerInput
+00000000                             8          *ASCII CODE 25 = 0
+00000000  7420                       9          move.l          #$20,d2
+00000002                            10  inputLoop
+00000002  4280                      11          clr.l           d0   
+00000004  103C 0013                 12          move.b          #GET_KEY_INPUT_COMMAND,d0
+00000008                            13  *put current ascii value we're looking for into d1 for trap
+00000008  2202                      14          move.l          d2,d1
+0000000A  4E4F                      15          TRAP            #15
+0000000C                            16  *if key is pressed call function if not just goto next ascii value
+0000000C  0C01 0000                 17          cmpi.b          #0,d1
+00000010  6700 0008                 18          beq             noCall
+00000014  4EB9 00000038             19          jsr             callFunction
+0000001A                            20  noCall
+0000001A                            21  *bump to next ascii value
+0000001A  5282                      22          add.l           #1,d2          
+0000001C                            23  *if we're at Z, then reinit the data to 0 and begin loop again
+0000001C  0C02 005A                 24          cmpi.b          #$5A,d2
+00000020  66E0                      25          bne             inputLoop
+00000022  23FC 00000000 000005C4    26          move.l          #0, Player1BeamPressed
+0000002C  23FC 00000000 000005C8    27          move.l          #0, Player2BeamPressed
+00000036  4E75                      28          rts
+00000038                            29  
+00000038                            30  callFunction
+00000038                            31  *save off registers
+00000038  48E7 FFFE                 32          movem.l ALL_REG,-(sp)
+0000003C                            33  *load up FunctionTable[d2-'0']  
+0000003C  41F9 000004D8             34          lea     FunctionTable,a0
+00000042  0482 00000020             35          sub.l   #$20,d2
+00000048  E58A                      36          lsl.l   #2,d2
+0000004A  2230 2000                 37          move.l  (a0,d2),d1
+0000004E                            38  *if it's a null function ptr, nothting to call so leave
+0000004E  0C81 00000000             39          cmpi.l  #0,d1
+00000054  6700 0006                 40          beq     noFuncPtr
+00000058                            41  *move value into A1 and call it
+00000058  2241                      42          move.l  d1,a1
+0000005A  4E91                      43          jsr     (a1)  
+0000005C                            44  noFuncPtr
+0000005C  4CDF 7FFF                 45          movem.l (sp)+,ALL_REG
+00000060  4E75                      46          rts
+00000062                            47  
+00000062                            48  
+00000062                            49  
+00000062                            50  
+00000062                            51  
+00000062                            52  
+00000062                            53  
+00000062                            54  
+00000062                            55  
+00000062                            56  
+00000062                            57  
+00000062                            58  *input routines
+00000062                            59  spaceRoutine
+00000062  48E7 FFFE                 60          movem.l ALL_REG,-(sp)   
+00000066  4CDF 7FFF                 61          movem.l (sp)+,ALL_REG
+0000006A                            62          
+0000006A  203C 00000226             63          move.l  #550, d0
+Line 64 ERROR: Undefined symbol
+00000070  2239 004DBB8E             64          move.l  Player1Y, d1
+Line 65 ERROR: Undefined symbol
+00000076  EC49                      65          lsr     #FRAC_BITS, d1
+00000078  B280                      66          cmp.l   d0,d1
+0000007A  6600 0010                 67          BNE     jumpLoop
+0000007E                            68          
+Line 69 ERROR: Undefined symbol
+0000007E  43F9 004DBB8E             69          lea     JumpSound, a1
+00000084  7200                      70          move.l  #0,d1
+00000086  7400                      71          move.l  #0,d2
+00000088  7049                      72          move.l  #73,d0
+0000008A  4E4F                      73          Trap    #15
+0000008C                            74          
+0000008C                            75  jumpLoop
+Line 76 ERROR: Undefined symbol
+0000008C  23FC 00000000 00544480    76          move.l  #0, Player1Velocity
+Line 77 ERROR: Undefined symbol
+00000096  2839 004DBB8E             77          move.l  Player1Y, d4
+0000009C  7A32                      78          move.l  #50, d5
+Line 79 ERROR: Undefined symbol
+0000009E  ED4D                      79          lsl     #FRAC_BITS, d5
+Line 80 ERROR: Undefined symbol
+000000A0  2C39 004DBB8E             80          move.l  Player1Y, d6
+Line 81 ERROR: Undefined symbol
+000000A6  2639 004DBB8E             81          move.l  Player1Speed, d3
+Line 82 ERROR: Undefined symbol
+000000AC  ED4B                      82          lsl     #FRAC_BITS, d3
+000000AE  9C83                      83          sub.l   d3, d6
+000000B0  BC45                      84          cmp     d5, d6
+000000B2  6D00 001E                 85          BLT     spaceRoutineExit
+000000B6                            86          
+Line 87 ERROR: Undefined symbol
+000000B6  23F9 004DBB8E 00544480    87          move.l  Player1JumpSprite, Player1ChunkX
+000000C0  9883                      88          sub.l   d3, d4
+Line 89 ERROR: Undefined symbol
+000000C2  23C4 00544480             89          move.l  d4, Player1Y
+Line 90 ERROR: Undefined symbol
+000000C8  23FC 00000001 00544480    90          move.l  #1, Player1Jumping
+000000D2                            91          
+000000D2                            92  spaceRoutineExit
+000000D2  4E75                      93          rts
+000000D4                            94  leftRoutine
+000000D4  48E7 FFFE                 95          movem.l ALL_REG,-(sp)   
+000000D8  4CDF 7FFF                 96          movem.l (sp)+,ALL_REG
+Line 97 ERROR: Undefined symbol
+000000DC  23FC 00000001 00544480    97          move.l  #1, Player2Left
+Line 98 ERROR: Undefined symbol
+000000E6  2839 004DBB8E             98          move.l  Player2X, d4
+000000EC  7A00                      99          move.l  #0, d5
+Line 100 ERROR: Undefined symbol
+000000EE  2C39 004DBB8E            100          move.l  Player2X, d6
+Line 101 ERROR: Undefined symbol
+000000F4  9CB9 004DBB8E            101          sub.l   Player2Speed, d6
+000000FA  6D00 0040                102          BLT     leftRoutineExit
+000000FE                           103          
+Line 104 ERROR: Undefined symbol
+000000FE  23FC 00000081 00544480   104          move.l  #129, Player2IdleSprite
+Line 105 ERROR: Undefined symbol
+00000108  23FC 00000020 00544480   105          move.l  #32,  Player2JumpSprite
+Line 106 ERROR: Undefined symbol
+00000112  23FC 00000040 00544480   106          move.l  #64, Player2BeamSprite
+Line 107 ERROR: Undefined symbol
+0000011C  23FC 00000000 00544480   107          move.l  #0, Player2DamageSprite
+00000126                           108          
+Line 109 ERROR: Undefined symbol
+00000126  23FC 00000061 00544480   109          move.l  #97, Player2ChunkX
+Line 110 ERROR: Undefined symbol
+00000130  98B9 004DBB8E            110          sub.l   Player2Speed, d4
+Line 111 ERROR: Undefined symbol
+00000136  23C4 00544480            111          move.l  d4, Player2X
+0000013C                           112  leftRoutineExit
+0000013C  4E75                     113          rts
+0000013E                           114          
+0000013E                           115  upRoutine
+0000013E  48E7 FFFE                116          movem.l ALL_REG,-(sp)   
+00000142  4CDF 7FFF                117          movem.l (sp)+,ALL_REG
+00000146                           118          
+00000146  203C 0000021C            119          move.l  #540, d0
+Line 120 ERROR: Undefined symbol
+0000014C  2239 004DBB8E            120          move.l  Player2Y, d1
+Line 121 ERROR: Undefined symbol
+00000152  EC49                     121          lsr     #FRAC_BITS, d1
+00000154  B280                     122          cmp.l   d0,d1
+00000156  6600 0010                123          BNE     GokuJumpLoop
+0000015A                           124          
+Line 125 ERROR: Undefined symbol
+0000015A  43F9 004DBB8E            125          lea     JumpSound, a1
+00000160  7200                     126          move.l  #0,d1
+00000162  7400                     127          move.l  #0,d2
+00000164  7049                     128          move.l  #73,d0
+00000166  4E4F                     129          Trap    #15
+00000168                           130        
+00000168                           131  GokuJumpLoop
+Line 132 ERROR: Undefined symbol
+00000168  23FC 00000000 00544480   132          move.l  #0, Player2Velocity
+Line 133 ERROR: Undefined symbol
+00000172  2839 004DBB8E            133          move.l  Player2Y, d4
+00000178  7A32                     134          move.l  #50, d5
+0000017A  E94D                     135          lsl     #4, d5
+Line 136 ERROR: Undefined symbol
+0000017C  2C39 004DBB8E            136          move.l  Player2Y, d6
+Line 137 ERROR: Undefined symbol
+00000182  2639 004DBB8E            137          move.l  Player2Speed, d3
+00000188  E94B                     138          lsl     #4, d3
+0000018A  9C83                     139          sub.l   d3, d6
+0000018C  BC45                     140          cmp     d5, d6
+0000018E  6D00 001E                141          BLT     upRoutineExit
+00000192                           142          
+Line 143 ERROR: Undefined symbol
+00000192  23F9 004DBB8E 00544480   143          move.l  Player2JumpSprite, Player2ChunkX
+0000019C  9883                     144          sub.l   d3, d4
+Line 145 ERROR: Undefined symbol
+0000019E  23C4 00544480            145          move.l  d4, Player2Y
+Line 146 ERROR: Undefined symbol
+000001A4  23FC 00000001 00544480   146          move.l  #1, Player2Jumping
+000001AE                           147          
+000001AE                           148  upRoutineExit
+000001AE  4E75                     149          rts   
+000001B0                           150   
+000001B0                           151  rightRoutine
+000001B0  48E7 FFFE                152          movem.l ALL_REG,-(sp)   
+000001B4  4CDF 7FFF                153          movem.l (sp)+,ALL_REG
+Line 154 ERROR: Undefined symbol
+000001B8  23FC 00000000 00544480   154          move.l  #0, Player2Left
+Line 155 ERROR: Undefined symbol
+000001C2  2839 004DBB8E            155          move.l  Player2X, d4
+000001C8  2A3C 000002BC            156          move.l  #700, d5
+Line 157 ERROR: Undefined symbol
+000001CE  9AB9 004DBB8E            157          sub.l   Player2Width, d5
+Line 158 ERROR: Undefined symbol
+000001D4  2C39 004DBB8E            158          move.l  Player2X, d6
+Line 159 ERROR: Undefined symbol
+000001DA  DCB9 004DBB8E            159          add.l   Player2Speed, d6
+000001E0  BC45                     160          cmp     d5, d6
+000001E2  6E00 0040                161          BGT     rightRoutineExit
+000001E6                           162          
+Line 163 ERROR: Undefined symbol
+000001E6  23FC 0000009F 00544480   163          move.l  #159, Player2IdleSprite
+Line 164 ERROR: Undefined symbol
+000001F0  23FC 00000100 00544480   164          move.l  #256,  Player2JumpSprite
+Line 165 ERROR: Undefined symbol
+000001FA  23FC 000000E0 00544480   165          move.l  #224, Player2BeamSprite
+Line 166 ERROR: Undefined symbol
+00000204  23FC 00000120 00544480   166          move.l  #288, Player2DamageSprite
+0000020E                           167          
+Line 168 ERROR: Undefined symbol
+0000020E  23FC 000000BF 00544480   168          move.l  #191, Player2ChunkX
+Line 169 ERROR: Undefined symbol
+00000218  D8B9 004DBB8E            169          add.l   Player2Speed, d4
+Line 170 ERROR: Undefined symbol
+0000021E  23C4 00544480            170          move.l  d4, Player2X
+00000224                           171  rightRoutineExit
+00000224  4E75                     172          rts     
+00000226                           173  downRoutine
+00000226  48E7 FFFE                174          movem.l ALL_REG,-(sp)   
+0000022A  4CDF 7FFF                175          movem.l (sp)+,ALL_REG
+0000022E  4E75                     176          rts
+00000230                           177  routine0
+00000230  48E7 FFFE                178          movem.l ALL_REG,-(sp)   
+00000234  4CDF 7FFF                179          movem.l (sp)+,ALL_REG
+00000238  4E75                     180          rts
+0000023A                           181  routine1
+0000023A  48E7 FFFE                182          movem.l ALL_REG,-(sp)   
+0000023E  4CDF 7FFF                183          movem.l (sp)+,ALL_REG
+00000242  4E75                     184          rts     
+00000244                           185  routine2
+00000244  48E7 FFFE                186          movem.l ALL_REG,-(sp)   
+00000248  4CDF 7FFF                187          movem.l (sp)+,ALL_REG
+0000024C  4E75                     188          rts     
+0000024E                           189  routine3
+0000024E  48E7 FFFE                190          movem.l ALL_REG,-(sp)   
+00000252  4CDF 7FFF                191          movem.l (sp)+,ALL_REG
+00000256  4E75                     192          rts     
+00000258                           193  routine4
+00000258  48E7 FFFE                194          movem.l ALL_REG,-(sp)   
+0000025C  4CDF 7FFF                195          movem.l (sp)+,ALL_REG
+00000260  4E75                     196          rts     
+00000262                           197  routine5
+00000262  48E7 FFFE                198          movem.l ALL_REG,-(sp)   
+00000266  4CDF 7FFF                199          movem.l (sp)+,ALL_REG
+0000026A  4E75                     200          rts
+0000026C                           201  routine6
+0000026C  48E7 FFFE                202          movem.l ALL_REG,-(sp)   
+00000270  4CDF 7FFF                203          movem.l (sp)+,ALL_REG
+00000274  4E75                     204          rts
+00000276                           205  routine7
+00000276  48E7 FFFE                206          movem.l ALL_REG,-(sp)   
+0000027A  4CDF 7FFF                207          movem.l (sp)+,ALL_REG
+0000027E  4E75                     208          rts
+00000280                           209  routine8
+00000280  48E7 FFFE                210          movem.l ALL_REG,-(sp)   
+00000284  4CDF 7FFF                211          movem.l (sp)+,ALL_REG
+00000288  4E75                     212          rts
+0000028A                           213  routine9
+0000028A  48E7 FFFE                214          movem.l ALL_REG,-(sp)   
+0000028E  4CDF 7FFF                215          movem.l (sp)+,ALL_REG
+00000292  4E75                     216          rts
+00000294                           217  routineA
+00000294  48E7 FFFE                218          movem.l ALL_REG,-(sp)   
+00000298  4CDF 7FFF                219          movem.l (sp)+,ALL_REG
+Line 220 ERROR: Undefined symbol
+0000029C  23FC 00000001 00544480   220          move.l  #1, Player1Left 
+Line 221 ERROR: Undefined symbol
+000002A6  2839 004DBB8E            221          move.l  Player1X, d4
+000002AC  7A00                     222          move.l  #0, d5
+Line 223 ERROR: Undefined symbol
+000002AE  2C39 004DBB8E            223          move.l  Player1X, d6
+Line 224 ERROR: Undefined symbol
+000002B4  9CB9 004DBB8E            224          sub.l   Player1Speed, d6
+000002BA  6D00 0040                225          BLT     ARoutineExit
+000002BE                           226          
+Line 227 ERROR: Undefined symbol
+000002BE  23FC 00000080 00544480   227          move.l  #128, Player1IdleSprite
+Line 228 ERROR: Undefined symbol
+000002C8  23FC 00000020 00544480   228          move.l  #32,  Player1JumpSprite
+Line 229 ERROR: Undefined symbol
+000002D2  23FC 00000040 00544480   229          move.l  #64, Player1BeamSprite
+Line 230 ERROR: Undefined symbol
+000002DC  23FC 00000000 00544480   230          move.l  #0, Player1DamageSprite
+000002E6                           231                  
+Line 232 ERROR: Undefined symbol
+000002E6  23FC 00000060 00544480   232          move.l  #96, Player1ChunkX
+Line 233 ERROR: Undefined symbol
+000002F0  98B9 004DBB8E            233          sub.l   Player1Speed, d4
+Line 234 ERROR: Undefined symbol
+000002F6  23C4 00544480            234          move.l  d4, Player1X
+000002FC                           235  ARoutineExit
+000002FC  4E75                     236          rts
+000002FE                           237  routineB
+000002FE  48E7 FFFE                238          movem.l ALL_REG,-(sp)   
+00000302  4CDF 7FFF                239          movem.l (sp)+,ALL_REG
+00000306  4E75                     240          rts
+00000308                           241  routineC
+00000308  48E7 FFFE                242          movem.l ALL_REG,-(sp)   
+0000030C  4CDF 7FFF                243          movem.l (sp)+,ALL_REG
+00000310  4E75                     244          rts
+00000312                           245  routineD
+00000312  48E7 FFFE                246          movem.l ALL_REG,-(sp)   
+00000316  4CDF 7FFF                247          movem.l (sp)+,ALL_REG
+Line 248 ERROR: Undefined symbol
+0000031A  23FC 00000000 00544480   248          move.l  #0, Player1Left
+Line 249 ERROR: Undefined symbol
+00000324  2839 004DBB8E            249          move.l  Player1X, d4
+0000032A  2A3C 000002BC            250          move.l  #700, d5
+Line 251 ERROR: Undefined symbol
+00000330  9AB9 004DBB8E            251          sub.l   Player1Width, d5
+Line 252 ERROR: Undefined symbol
+00000336  2C39 004DBB8E            252          move.l  Player1X, d6
+Line 253 ERROR: Undefined symbol
+0000033C  DCB9 004DBB8E            253          add.l   Player1Speed, d6
+00000342  BC45                     254          cmp     d5, d6
+00000344  6E00 0040                255          BGT     DRoutineExit
+00000348                           256          
+Line 257 ERROR: Undefined symbol
+00000348  23FC 000000A0 00544480   257          move.l  #160, Player1IdleSprite
+Line 258 ERROR: Undefined symbol
+00000352  23FC 00000100 00544480   258          move.l  #256,  Player1JumpSprite
+Line 259 ERROR: Undefined symbol
+0000035C  23FC 000000E0 00544480   259          move.l  #224, Player1BeamSprite
+Line 260 ERROR: Undefined symbol
+00000366  23FC 00000120 00544480   260          move.l  #288, Player1DamageSprite
+00000370                           261          
+Line 262 ERROR: Undefined symbol
+00000370  23FC 000000C0 00544480   262          move.l  #192, Player1ChunkX
+Line 263 ERROR: Undefined symbol
+0000037A  D8B9 004DBB8E            263          add.l   Player1Speed, d4
+Line 264 ERROR: Undefined symbol
+00000380  23C4 00544480            264          move.l  d4, Player1X
+00000386                           265  DRoutineExit
+00000386  4E75                     266          rts 
+00000388                           267  routineE
+00000388  48E7 FFFE                268          movem.l ALL_REG,-(sp)   
+0000038C  4CDF 7FFF                269          movem.l (sp)+,ALL_REG
+00000390  4E75                     270          rts
+00000392                           271  routineF
+00000392  48E7 FFFE                272          movem.l ALL_REG,-(sp)   
+00000396  4CDF 7FFF                273          movem.l (sp)+,ALL_REG
+0000039A  4E75                     274          rts
+0000039C                           275  routineG
+0000039C  48E7 FFFE                276          movem.l ALL_REG,-(sp)   
+000003A0  4CDF 7FFF                277          movem.l (sp)+,ALL_REG
+000003A4  4E75                     278          rts
+000003A6                           279  routineH
+000003A6  48E7 FFFE                280          movem.l ALL_REG,-(sp)   
+000003AA  4CDF 7FFF                281          movem.l (sp)+,ALL_REG
+000003AE  4E75                     282          rts
+000003B0                           283  routineI
+000003B0  48E7 FFFE                284          movem.l ALL_REG,-(sp)   
+000003B4  4CDF 7FFF                285          movem.l (sp)+,ALL_REG
+000003B8  4E75                     286          rts
+000003BA                           287  routineJ
+000003BA  48E7 FFFE                288          movem.l ALL_REG,-(sp)   
+000003BE  4CDF 7FFF                289          movem.l (sp)+,ALL_REG
+000003C2  4E75                     290          rts
+000003C4                           291  routineK
+000003C4  48E7 FFFE                292          movem.l ALL_REG,-(sp)   
+000003C8  4CDF 7FFF                293          movem.l (sp)+,ALL_REG
+000003CC  4E75                     294          rts
+000003CE                           295  
+000003CE                           296  routineL
+000003CE  48E7 FFFE                297          movem.l ALL_REG,-(sp)   
+000003D2  4CDF 7FFF                298          movem.l (sp)+,ALL_REG
+000003D6  4E75                     299          rts
+000003D8                           300  
+000003D8                           301  routineM
+000003D8  48E7 FFFE                302          movem.l ALL_REG,-(sp)   
+000003DC  4CDF 7FFF                303          movem.l (sp)+,ALL_REG
+000003E0  4E75                     304          rts
+000003E2                           305  
+000003E2                           306  routineN
+000003E2  48E7 FFFE                307          movem.l ALL_REG,-(sp)   
+000003E6  4CDF 7FFF                308          movem.l (sp)+,ALL_REG
+000003EA  4E75                     309          rts
+000003EC                           310  
+000003EC                           311  routineO
+000003EC  48E7 FFFE                312          movem.l ALL_REG,-(sp)   
+000003F0  4CDF 7FFF                313          movem.l (sp)+,ALL_REG
+000003F4                           314          
+000003F4  2039 000005C8            315          move.l  Player2BeamPressed, d0
+000003FA  0C80 00000000            316          cmpi.l  #0, d0
+00000400  6600 002C                317          BNE     routineOExit
+00000404                           318          
+00000404  23FC 00000001 000005C8   319          move.l  #1, Player2BeamPressed
+0000040E                           320          
+Line 321 ERROR: Undefined symbol
+0000040E  2039 004DBB8E            321          move.l  Player2ProjectileActive, d0
+00000414  0C80 00000000            322          cmpi.l  #0, d0
+0000041A  6600 0012                323          BNE     routineOExit
+0000041E                           324          
+Line 325 ERROR: Undefined symbol
+0000041E  23F9 004DBB8E 00544480   325          move.l  Player2BeamSprite, Player2ChunkX
+00000428                           326          
+Line 327 ERROR: Undefined symbol
+00000428  4EB9 004DBB8E            327          jsr     spawnPlayer2Projectile
+0000042E                           328          
+0000042E                           329  routineOExit
+0000042E  4E75                     330          rts
+00000430                           331  
+00000430                           332  routineP
+00000430  48E7 FFFE                333          movem.l ALL_REG,-(sp)   
+00000434  4CDF 7FFF                334          movem.l (sp)+,ALL_REG
+00000438  4E75                     335          rts
+0000043A                           336  
+0000043A                           337  routineQ
+0000043A  48E7 FFFE                338          movem.l ALL_REG,-(sp)   
+0000043E  4CDF 7FFF                339          movem.l (sp)+,ALL_REG
+00000442  4E75                     340          rts
+00000444                           341  
+00000444                           342  routineR
+00000444  48E7 FFFE                343          movem.l ALL_REG,-(sp)   
+00000448  4CDF 7FFF                344          movem.l (sp)+,ALL_REG
+0000044C  4E75                     345          rts
+0000044E                           346  
+0000044E                           347  routineS
+0000044E  48E7 FFFE                348          movem.l ALL_REG,-(sp)   
+00000452  4CDF 7FFF                349          movem.l (sp)+,ALL_REG
+00000456  4E75                     350          rts
+00000458                           351  
+00000458                           352  routineT
+00000458  48E7 FFFE                353          movem.l ALL_REG,-(sp)   
+0000045C  4CDF 7FFF                354          movem.l (sp)+,ALL_REG
+00000460  4E75                     355          rts
+00000462                           356  
+00000462                           357  routineU
+00000462  48E7 FFFE                358          movem.l ALL_REG,-(sp)   
+00000466  4CDF 7FFF                359          movem.l (sp)+,ALL_REG
+0000046A  4E75                     360          rts
+0000046C                           361  
+0000046C                           362  routineV
+0000046C                           363  
+0000046C  48E7 FFFE                364          movem.l ALL_REG,-(sp)   
+00000470  4CDF 7FFF                365          movem.l (sp)+,ALL_REG
+00000474  4E75                     366          rts
+00000476                           367  
+00000476                           368  routineW
+00000476  48E7 FFFE                369          movem.l ALL_REG,-(sp)   
+0000047A  4CDF 7FFF                370          movem.l (sp)+,ALL_REG
+0000047E                           371          
+0000047E  2039 000005C4            372          move.l  Player1BeamPressed, d0
+00000484  0C80 00000000            373          cmpi.l  #0, d0
+0000048A  6600 002C                374          BNE     routineWExit
+0000048E                           375          
+0000048E  23FC 00000001 000005C4   376          move.l  #1, Player1BeamPressed
+00000498                           377          
+Line 378 ERROR: Undefined symbol
+00000498  2039 004DBB8E            378          move.l  Player1ProjectileActive, d0
+0000049E  0C80 00000000            379          cmpi.l  #0, d0
+000004A4  6600 0012                380          BNE     routineWExit
+000004A8                           381          
+Line 382 ERROR: Undefined symbol
+000004A8  23F9 004DBB8E 00544480   382          move.l  Player1BeamSprite, Player1ChunkX
+000004B2                           383          
+Line 384 ERROR: Undefined symbol
+000004B2  4EB9 004DBB8E            384          jsr     spawnPlayer1Projectile
+000004B8                           385          
+000004B8                           386  routineWExit
+000004B8  4E75                     387          rts
+000004BA                           388  
+000004BA                           389  routineX
+000004BA  48E7 FFFE                390          movem.l ALL_REG,-(sp)   
+000004BE  4CDF 7FFF                391          movem.l (sp)+,ALL_REG
+000004C2  4E75                     392          rts
+000004C4                           393  
+000004C4                           394  routineY
+000004C4  48E7 FFFE                395          movem.l ALL_REG,-(sp)   
+000004C8  4CDF 7FFF                396          movem.l (sp)+,ALL_REG
+000004CC  4E75                     397          rts
+000004CE                           398  
+000004CE                           399  routineZ
+000004CE  48E7 FFFE                400          movem.l ALL_REG,-(sp)   
+000004D2  4CDF 7FFF                401          movem.l (sp)+,ALL_REG
+000004D6  4E75                     402          rts
+000004D8                           403          
+000004D8                           404          ;STOP #$2000
+000004D8                           405  *start data
+000004D8                           406  FunctionTable   
+000004D8                           407                  *0-9
+000004D8= 00000062                 408                  dc.l    spaceRoutine
+000004DC= 00000000 00000000 ...    409                  dc.l    0,0,0,0
+000004EC= 000000D4 0000013E ...    410                  dc.l    leftRoutine,upRoutine,rightRoutine,downRoutine
+000004FC= 00000000 00000000 ...    411                  dc.l    0,0,0,0,0,0,0
+00000518= 00000230 0000023A ...    412                  dc.l    routine0,routine1,routine2,routine3,routine4,routine5,routine6,routine7,routine8,routine9
+00000540= 00000000 00000000 ...    413                  dc.l    0,0,0,0,0,0,0
+0000055C= 00000294 000002FE ...    414                  dc.l    routineA,routineB,routineC,routineD,routineE,routineF,routineG
+00000578= 000003A6 000003B0 ...    415                  dc.l    routineH,routineI,routineJ,routineK,routineL,routineM,routineN
+00000594= 000003EC 00000430 ...    416                  dc.l    routineO,routineP,routineQ,routineR,routineS,routineT,routineU
+000005B0= 0000046C 00000476 ...    417                  dc.l    routineV,routineW,routineX,routineY,routineZ
+000005C4                           418                  
+000005C4                           419  Player1BeamPressed
+000005C4= 00000000                 420          dc.l    0
+000005C8                           421  Player2BeamPressed
+000005C8= 00000000                 422          dc.l    0
+000005CC                           423          
+000005CC                           424  
+000005CC                           425  
+000005CC                           426  
+000005CC                           427  
+000005CC                           428  
+000005CC                           429  
+000005CC                           430  
+000005CC                           431  
+000005CC                           432  
+000005CC                           433  
+000005CC                           434  
+000005CC                           435  
+000005CC                           436  
+000005CC                           437  
+000005CC                           438  
+000005CC                           439  
+000005CC                           440  
+000005CC                           441  
+000005CC                           442  
+000005CC                           443  
+000005CC                           444  
+000005CC                           445  
+000005CC                           446  
+000005CC                           447  
+Line 448 WARNING: END directive missing, starting address not set
+
+74 errors detected
+1 warning generated
+
+
+SYMBOL TABLE INFORMATION
+Symbol-name         Value
+-------------------------
+ALL_REG             7FFF
+AROUTINEEXIT        2FC
+CALLFUNCTION        38
+DOWNROUTINE         226
+DROUTINEEXIT        386
+FUNCTIONTABLE       4D8
+GET_KEY_INPUT_COMMAND  13
+GOKUJUMPLOOP        168
+INITPLAYERINPUT     0
+INPUTLOOP           2
+JUMPLOOP            8C
+LEFTROUTINE         D4
+LEFTROUTINEEXIT     13C
+NOCALL              1A
+NOFUNCPTR           5C
+PLAYER1BEAMPRESSED  5C4
+PLAYER2BEAMPRESSED  5C8
+RIGHTROUTINE        1B0
+RIGHTROUTINEEXIT    224
+ROUTINE0            230
+ROUTINE1            23A
+ROUTINE2            244
+ROUTINE3            24E
+ROUTINE4            258
+ROUTINE5            262
+ROUTINE6            26C
+ROUTINE7            276
+ROUTINE8            280
+ROUTINE9            28A
+ROUTINEA            294
+ROUTINEB            2FE
+ROUTINEC            308
+ROUTINED            312
+ROUTINEE            388
+ROUTINEF            392
+ROUTINEG            39C
+ROUTINEH            3A6
+ROUTINEI            3B0
+ROUTINEJ            3BA
+ROUTINEK            3C4
+ROUTINEL            3CE
+ROUTINEM            3D8
+ROUTINEN            3E2
+ROUTINEO            3EC
+ROUTINEOEXIT        42E
+ROUTINEP            430
+ROUTINEQ            43A
+ROUTINER            444
+ROUTINES            44E
+ROUTINET            458
+ROUTINEU            462
+ROUTINEV            46C
+ROUTINEW            476
+ROUTINEWEXIT        4B8
+ROUTINEX            4BA
+ROUTINEY            4C4
+ROUTINEZ            4CE
+SPACEROUTINE        62
+SPACEROUTINEEXIT    D2
+UPROUTINE           13E
+UPROUTINEEXIT       1AE
