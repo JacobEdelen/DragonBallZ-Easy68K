@@ -15,6 +15,6 @@ Player2
 UpArrow: Jump
 LeftArrow: Move left
 Right Arrow: move right
-Up arrow: Jump
+O: shoot beam
 
 Reset the game after a player wins using the space bar
